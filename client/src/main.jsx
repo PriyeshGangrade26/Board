@@ -8,7 +8,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     domain="dev-s6ep4h08hrh0nnkb.us.auth0.com"
     clientId="WcsxIxAPtlbr0dCOmzE0VNIKEli1IEoL"
     authorizationParams={{
-      redirect_uri: "http://127.0.0.1:5173/dashboard",
+      redirect_uri: "https://board-fle7.onrender.com/dashboard",
     }}>
     <MainApp />
   </Auth0Provider>
