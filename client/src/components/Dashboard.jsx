@@ -184,7 +184,9 @@ const Dashboard = () => {
                   </Link>
                   <div
                     className={`${styles.footerItem}`}
-                    onClick={() => LogOut()}>
+                    onClick={() =>
+                      logout({ returnTo: window.location.origin })
+                    }>
                     Log Out
                   </div>
                 </div>
