@@ -87,9 +87,11 @@ const Dashboard = ({ LogOutLocalAuthentication }) => {
     sessionStorage.setItem("isLoggedOut", "true");
 
     setTimeout(() => {
-      logout({
-        logoutParams: { returnTo: window.location.origin },
-      });
+      if (isAuthenticated) {
+        logout({
+          logoutParams: { returnTo: window.location.origin },
+        });
+      }
       setTimeout(() => {
         isLoggedOut = true;
         LogOutLocalAuthentication();
