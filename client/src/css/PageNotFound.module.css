@@ -15,29 +15,39 @@
   height: 500px;
 }
 .message_404 {
+  display: flex;
+  justify-content: center;
+  text-align: center;
   margin-top: 15px;
   color: gray;
   font-size: 1em;
 }
 .btn_404 {
-  margin-top: 45px;
+  margin-top: 20px;
+  cursor: pointer;
   background-color: black;
   color: white;
-  padding: 8px 15px;
+  padding: 10px 20px;
+  font-size: 16px;
   border-radius: 8px;
   border: none;
   font-weight: bold;
 }
 
+/* tablet screen size */
 @media (max-width: 850px) {
   .message_404 {
     margin: 5px 100px 10px 100px;
   }
   .btn_404 {
-    margin-top: 35px;
+    margin-top: 20px;
+    padding: 15px 20px;
+    font-size: 16px;
+    border-radius: 7px;
   }
 }
 
+/* mobile screen size */
 @media (max-width: 450px) {
   .img_404 {
     width: 250px;
@@ -51,6 +61,9 @@
     margin: 5px 10px 10px 10px;
   }
   .btn_404 {
-    margin-top: 20px;
+    margin-top: 15px;
+    padding: 10px 15px;
+    font-size: 12px;
+    border-radius: 5px;
   }
 }

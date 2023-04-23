@@ -1,10 +1,6 @@
 import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import { Routes, Navigate } from "react-router-dom";
 import { Login } from "./components/Login";
 import "./css/global.css";
 import { Dashboard } from "./components/Dashboard";
@@ -29,6 +25,9 @@ const App = () => {
   const CheckLocalAuthentication = () => {
     setLocalAuthenticated(true);
   };
+  const LogOutLocalAuthentication = () => {
+    setLocalAuthenticated(false);
+  };
 
   return (
     <>
@@ -43,7 +42,9 @@ const App = () => {
           path="/dashboard"
           element={
             isAuthenticated || localAuthenticated ? (
-              <Dashboard />
+              <Dashboard
+                LogOutLocalAuthentication={LogOutLocalAuthentication}
+              />
             ) : (
               <Navigate to="/" />
             )

@@ -20,7 +20,7 @@ const About = () => {
           <p className={styles.location}>Chennai, India</p>
           <p className={styles.skills}>
             Skills : HTML, CSS, JavaScript, React.js, Vue.js, Node.js, Express,
-            MongoDB, TypeScript, Redux
+            MongoDB, TypeScript, Jenkins, Redux, Next.js
           </p>
         </div>
         <div className={styles.right}>

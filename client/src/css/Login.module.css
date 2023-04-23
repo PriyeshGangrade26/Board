@@ -152,6 +152,7 @@
   outline: 1px solid var(--color-black);
 }
 .forgotPassword {
+  cursor: pointer;
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
@@ -169,6 +170,7 @@
   line-height: 20px;
   text-align: center;
   color: var(--color-white);
+  cursor: pointer;
 }
 .DontHaveAnAccount {
   margin: 20px 0 0 0;
@@ -204,7 +206,8 @@
   color: red;
 }
 
-@media (max-width: 450px) {
+/* tablet screen size */
+@media (max-width: 650px) {
   .left {
     font-weight: 500;
     font-size: 35px;
@@ -319,7 +322,6 @@
     font-size: 14px;
     line-height: 0px;
   }
-
   .flexRow {
     display: flex;
     flex-direction: row;
@@ -333,5 +335,137 @@
   .displayError {
     color: red;
     font-size: 13px;
+  }
+}
+
+/* mobile screen size */
+@media (max-width: 415px) {
+  .left {
+    font-weight: 400;
+    font-size: 20px;
+  }
+  .signInHeading {
+    font-weight: 400;
+    font-size: 20px;
+  }
+  .signInSubHeading {
+    font-weight: 200;
+    font-size: 10px;
+  }
+  .oneTabLogin {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+}
+.oneTabLoginIcon {
+  margin: 0 5px 0 0;
+}
+.oneTabLoginBtn {
+  margin: 10px 0px 0 0;
+  background: var(--color-white);
+  border-radius: 10px;
+  padding: 15px;
+  border: none;
+  cursor: pointer;
+}
+  .formDataCard {
+    height: 200px;
+    width: 200px;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  .signUpFormDataCard {
+    height: 310px;
+    width: 200px;
+    border-radius: 8px;
+    padding: 10px;
+  }
+  .nameSubHeading {
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .nameInput {
+    height: 8px;
+    width: 170px;
+    border-radius: 5px;
+    padding: 15px 10px;
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .nameInput:focus {
+    outline: 1px solid var(--color-black);
+  }
+  .emailSubHeading {
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .emailInput {
+    height: 8px;
+    width: 170px;
+    border-radius: 5px;
+    padding: 15px 10px;
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .emailInput:focus {
+    outline: 1px solid var(--color-black);
+  }
+  .passwordSubHeading {
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .passwordInput {
+    height: 8px;
+    width: 170px;
+    border-radius: 5px;
+    padding: 15px 10px;
+    font-weight: 400;
+    font-size: 12px;
+  }
+  .passwordInput:focus {
+    outline: 1px solid var(--color-black);
+  }
+  .forgotPassword {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 10px;
+  }
+  .signBtn {
+    height: 40px;
+    width: 180px;
+    border-radius: 7px;
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 10px;
+    border: none;
+    overflow: hidden;
+  }
+  .DontHaveAnAccount {
+    margin: 10px 0 0 0;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 10px;
+    /* text-align: left; */
+  }
+  .register {
+    margin: 0px 0 0 10px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 10px;
+  }
+  .flexRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+  }
+  .fontAwesomeIcon {
+    margin-left: 5px;
+  }
+  .displayError {
+    color: red;
+    font-size: 11px;
   }
 }

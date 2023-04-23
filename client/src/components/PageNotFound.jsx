@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "../css/PageNotFound.module.css";
 import "../css/global.css";
-import image from "../assets/5203299.jpg";
+import image from "../assets/404.jpg";
 import { useNavigate } from "react-router-dom";
 
 const PageNotFound = () => {

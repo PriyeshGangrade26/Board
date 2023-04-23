@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import styles from "../css/Dashboard.module.css";
 import "../css/global.css";
+import { useNavigate } from "react-router-dom";
 import dashboardIcon from "../assets/icons/dashboard-icon.svg";
 import transactionsIcon from "../assets/icons/transactions-icon.svg";
 import scheduleIcon from "../assets/icons/schedule-icon.svg";
@@ -20,7 +21,10 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
-const Dashboard = () => {
+const Dashboard = ({ LogOutLocalAuthentication }) => {
+  const navigate = useNavigate();
+  const [dashboardLoadingSpinner, setdashboardLoadingSpinner] = useState(false);
+  const [dashboardHideEverything, setdashboardHideEverything] = useState(true);
   useEffect(() => {
     const isLoggedIn = sessionStorage.getItem("isLoggedIn");
     if (isLoggedIn === "true") {
@@ -33,15 +37,22 @@ const Dashboard = () => {
   const [users, setUsers] = useState([]);
   const [guest, setGuest] = useState([]);
   const [User, setUser] = useState([]);
+  const [axiosLoading, setAxiosLoading] = useState(true);
 
   useEffect(() => {
+    setAxiosLoading(true); // set loading state to true before making the Axios call
     axios
       .get("https://randomuser.me/api/?results=500")
-      .then((response) => setUsers(response.data.results))
-      .catch((error) => console.log(error));
+      .then((response) => {
+        setUsers(response.data.results);
+        setAxiosLoading(false); // set loading state to false after the Axios call is completed
+      })
+      .catch((error) => {
+        console.log(error);
+        setAxiosLoading(false); // set loading state to false after the Axios call is completed, even if it failed
+      });
   }, []);
 
-  // log the age and street number for each user
   useEffect(() => {
     if (users.length > 0) {
       const ageArray = [];
@@ -57,6 +68,11 @@ const Dashboard = () => {
     }
   }, [users]);
 
+  // render the loading state if the isLoading variable is true
+  if (axiosLoading) {
+    return <LoadingSpinner />;
+  }
+
   const { user, isAuthenticated, isLoading } = useAuth0();
   const location = useLocation();
   const { logout } = useAuth0();
@@ -65,21 +81,42 @@ const Dashboard = () => {
   }
 
   const LogOut = () => {
-    logout({
-      logoutParams: { returnTo: window.location.origin },
-    });
+    let isLoggedOut = false;
+    setdashboardHideEverything(false);
+    setdashboardLoadingSpinner(true);
     sessionStorage.setItem("isLoggedOut", "true");
+
+    setTimeout(() => {
+      logout({
+        logoutParams: { returnTo: window.location.origin },
+      });
+      setTimeout(() => {
+        isLoggedOut = true;
+        LogOutLocalAuthentication();
+        navigate("/");
+        setTimeout(() => {
+          if (isLoggedOut) {
+            setdashboardLoadingSpinner(false);
+            setdashboardHideEverything(true);
+          }
+        }, 3000);
+      }, 3000);
+    }, 3000);
   };
 
   return (
     <>
-      <div className={styles.mainContainer}>
-        <div className={styles.dashboardContainer}>
-          <div className={styles.leftDashboard}>
-            <div className={styles.navContainer}>
-              <div className={styles.companyName}>Board.</div>
-              <div className={styles.alignSidebarNavigation}>
+      {dashboardLoadingSpinner && <LoadingSpinner />}
+      {dashboardHideEverything && (
+        <>
+          <div className={styles.mainContainer}>
+            <div className={styles.dashboardContainer}>
+              <div className={styles.leftDashboard}>
                 <ul className={styles.navItems}>
+                  <div
+                    className={`${styles.companyName} ${styles.marginBottom}`}>
+                    Board.
+                  </div>
                   <div className={styles.iconItemCenter}>
                     <img
                       className={styles.navIcon}
@@ -88,7 +125,7 @@ const Dashboard = () => {
                     />
                     <Link
                       to="/dashboard"
-                      className={`${styles.Item} ${
+                      className={`${styles.Item} ${styles.itemMarginBottom} ${
                         location.pathname === "/dashboard" ? styles.active : ""
                       }`}>
                       Dashboard
@@ -102,7 +139,7 @@ const Dashboard = () => {
                     />
                     <Link
                       to="/transaction"
-                      className={`${styles.Item} ${
+                      className={`${styles.Item} ${styles.itemMarginBottom} ${
                         location.pathname === "/transaction"
                           ? styles.active
                           : ""
@@ -118,7 +155,7 @@ const Dashboard = () => {
                     />
                     <Link
                       to="/schedule"
-                      className={`${styles.Item} ${
+                      className={`${styles.Item} ${styles.itemMarginBottom} ${
                         location.pathname === "/schedule" ? styles.active : ""
                       }`}>
                       Schedules
@@ -132,7 +169,7 @@ const Dashboard = () => {
                     />
                     <Link
                       to="/user"
-                      className={`${styles.Item} ${
+                      className={`${styles.Item} ${styles.itemMarginBottom} ${
                         location.pathname === "/user" ? styles.active : ""
                       }`}>
                       Users
@@ -146,7 +183,7 @@ const Dashboard = () => {
                     />
                     <Link
                       to="/setting"
-                      className={`${styles.Item} ${
+                      className={`${styles.Item} ${styles.itemMarginBottom} ${
                         location.pathname === "/setting" ? styles.active : ""
                       }`}>
                       Settings
@@ -184,161 +221,114 @@ const Dashboard = () => {
                   </Link>
                   <div
                     className={`${styles.footerItem}`}
-                    onClick={() =>
-                      logout({ returnTo: window.location.origin })
-                    }>
+                    onClick={() => LogOut()}>
                     Log Out
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div className={styles.rightDashboard}>
-            <div className={styles.detailsContainer}>
-              <div className={styles.headerDashboard}>
-                <div>
-                  <b className={styles.dashboardHeading}>Dashboard</b>
-                </div>
+              <div className={styles.rightDashboard}>
+                <div className={styles.detailsContainer}>
+                  <div className={styles.headerDashboard}>
+                    <div>
+                      <b className={styles.dashboardHeading}>Dashboard</b>
+                    </div>
 
-                <div className={styles.centerHeaderItem}>
-                  <input
-                    className={styles.searchBar}
-                    type="text"
-                    placeholder="Search..."
-                  />
+                    <div className={styles.centerHeaderItem}>
+                      <input
+                        className={styles.searchBar}
+                        type="text"
+                        placeholder="Search..."
+                      />
 
-                  <img
-                    className={styles.bellIcon}
-                    alt="bell icon"
-                    src={bellIcon}
-                  />
+                      <img
+                        className={styles.bellIcon}
+                        alt="bell icon"
+                        src={bellIcon}
+                      />
 
-                  {isAuthenticated ? (
-                    <img
-                      className={styles.profileIcon}
-                      src={user.picture}
-                      alt="profile icon"
-                    />
-                  ) : (
-                    <img
-                      className={styles.profileIcon}
-                      src={profileIcon}
-                      alt="profile icon"
-                    />
-                  )}
-                </div>
-              </div>
-              <div className={styles.userDataCards}>
-                <div
-                  className={`${styles.cardData} ${styles.revenueCardColor}`}>
-                  <div className={styles.alignRight}>
-                    <img
-                      src={revenuesIcon}
-                      alt="revenues Icon"
-                      className={styles.revenuesIcon}
-                    />
+                      {isAuthenticated ? (
+                        <img
+                          className={styles.profileIcon}
+                          src={user.picture}
+                          alt="profile icon"
+                        />
+                      ) : (
+                        <img
+                          className={styles.profileIcon}
+                          src={profileIcon}
+                          alt="profile icon"
+                        />
+                      )}
+                    </div>
                   </div>
-                  <p className={styles.cardTitle}>Total Revenues</p>
-                  {users.length > 0 && (
-                    <p className={`${styles.cardAmount} ${styles.whiteSpace}`}>
-                      $ {users[0]?.location.postcode}
-                    </p>
-                  )}
-                </div>
+                  <div className={styles.userDataCards}>
+                    <div
+                      className={`${styles.cardData} ${styles.revenueCardColor}`}>
+                      <div className={styles.alignRight}>
+                        <img
+                          src={revenuesIcon}
+                          alt="revenues Icon"
+                          className={styles.revenuesIcon}
+                        />
+                      </div>
+                      <p className={styles.cardTitle}>Total Revenues</p>
+                      {users.length > 0 && (
+                        <p
+                          className={`${styles.cardAmount} ${styles.whiteSpace}`}>
+                          $ {users[0]?.location.postcode}
+                        </p>
+                      )}
+                    </div>
 
-                <div
-                  className={`${styles.cardData} ${styles.transactionsCardColor}`}>
-                  <div className={styles.alignRight}>
-                    <img
-                      src={transactionIcon}
-                      alt="transaction Icon"
-                      className={styles.revenuesIcon}
-                    />
+                    <div
+                      className={`${styles.cardData} ${styles.transactionsCardColor}`}>
+                      <div className={styles.alignRight}>
+                        <img
+                          src={transactionIcon}
+                          alt="transaction Icon"
+                          className={styles.revenuesIcon}
+                        />
+                      </div>
+
+                      <p className={styles.cardTitle}>Total Transactions</p>
+                      <p className={styles.cardAmount}>
+                        {users[0]?.location.street.number}
+                      </p>
+                    </div>
+
+                    <div
+                      className={`${styles.cardData} ${styles.likesCardColor}`}>
+                      <div className={styles.alignRight}>
+                        <img
+                          src={likeIcon}
+                          alt="like Icon"
+                          className={styles.revenuesIcon}
+                        />
+                      </div>
+                      <p className={styles.cardTitle}>Total Likes</p>
+                      <p className={styles.cardAmount}>{users[0]?.dob.age}</p>
+                    </div>
+
+                    <div
+                      className={`${styles.cardData} ${styles.usersCardColor}`}>
+                      <div className={styles.alignRight}>
+                        <img
+                          src={usersIcon}
+                          alt="users Icon"
+                          className={styles.revenuesIcon}
+                        />
+                      </div>
+                      <p className={styles.cardTitle}>Total Users</p>
+                      <p className={styles.cardAmount}>
+                        {users[0]?.registered.age}
+                      </p>
+                    </div>
                   </div>
 
-                  <p className={styles.cardTitle}>Total Transactions</p>
-                  <p className={styles.cardAmount}>
-                    {users[0]?.location.street.number}
-                  </p>
-                </div>
-
-                <div className={`${styles.cardData} ${styles.likesCardColor}`}>
-                  <div className={styles.alignRight}>
-                    <img
-                      src={likeIcon}
-                      alt="like Icon"
-                      className={styles.revenuesIcon}
-                    />
-                  </div>
-                  <p className={styles.cardTitle}>Total Likes</p>
-                  <p className={styles.cardAmount}>{users[0]?.dob.age}</p>
-                </div>
-
-                <div className={`${styles.cardData} ${styles.usersCardColor}`}>
-                  <div className={styles.alignRight}>
-                    <img
-                      src={usersIcon}
-                      alt="users Icon"
-                      className={styles.revenuesIcon}
-                    />
-                  </div>
-                  <p className={styles.cardTitle}>Total Users</p>
-                  <p className={styles.cardAmount}>
-                    {users[0]?.registered.age}
-                  </p>
-                </div>
-              </div>
-
-              {/* Chart */}
-              <div className={styles.chart}>
-                <div className={styles.alignHeading}>
-                  <b className={styles.graphHeading}>Activities</b>
-                  <input
-                    className={styles.dateInput}
-                    type="date"
-                    name=""
-                    id=""
-                  />
-                </div>
-
-                <Chart
-                  options={{
-                    chart: {
-                      id: "basic-bar",
-                      toolbar: {
-                        show: false,
-                      },
-                    },
-                    colors: ["#E9A0A0", "#9BDD7C"],
-                    stroke: {
-                      curve: "smooth",
-                      width: 3,
-                    },
-                    xaxis: {
-                      categories: ["Week 1", "Week 2", "Week 3", "Week 4"],
-                    },
-                  }}
-                  series={[
-                    {
-                      name: "Guest",
-                      data: guest,
-                    },
-                    {
-                      name: "User",
-                      data: User,
-                    },
-                  ]}
-                  type="line"
-                  height="300"
-                />
-              </div>
-
-              {/* Pie Chart */}
-              <div className={styles.pieChartContainer}>
-                <div className={styles.alignPieChartCards}>
-                  <div className={styles.pieChartCard}>
-                    <div className={styles.pieChartCardItem}>
-                      <b className={styles.pieChartHeading}>Top products</b>
+                  {/* Chart */}
+                  <div className={styles.chart}>
+                    <div className={styles.alignHeading}>
+                      <b className={styles.graphHeading}>Activities</b>
                       <input
                         className={styles.dateInput}
                         type="date"
@@ -346,78 +336,157 @@ const Dashboard = () => {
                         id=""
                       />
                     </div>
-                    <div className={styles.pieChartCenter}>
-                      <Chart
-                        options={{
-                          chart: {
-                            width: 380,
-                            type: "pie",
+
+                    <Chart
+                      options={{
+                        chart: {
+                          id: "basic-bar",
+                          toolbar: {
+                            show: false,
                           },
-                          colors: ["#98D89E", "#F6DC7D", "#EE8484"],
-                          labels: [
-                            "Basic Tees",
-                            "Custom Short Pants",
-                            "Super Hoodies",
-                            "Shirt",
-                          ],
-                          responsive: [
-                            {
-                              breakpoint: 1200, // tablet screen size
-                              options: {
-                                chart: {
-                                  width: 350,
-                                },
-                                legend: {
-                                  position: "right",
-                                },
-                              },
-                            },
-                            {
-                              breakpoint: 480, // mobile screen size
-                              options: {
-                                chart: {
-                                  width: 300,
-                                },
-                                legend: {
-                                  position: "bottom",
-                                },
-                              },
-                            },
-                          ],
-                        }}
-                        series={guest}
-                        type="pie"
-                        width={380}
-                      />
-                    </div>
+                        },
+                        colors: ["#E9A0A0", "#9BDD7C"],
+                        stroke: {
+                          curve: "smooth",
+                          width: 3,
+                        },
+                        xaxis: {
+                          categories: ["Week 1", "Week 2", "Week 3", "Week 4"],
+                        },
+                      }}
+                      series={[
+                        {
+                          name: "Guest",
+                          data: guest,
+                        },
+                        {
+                          name: "User",
+                          data: User,
+                        },
+                      ]}
+                      type="line"
+                      height="300"
+                    />
                   </div>
-                  <div className={styles.pieChartCard}>
-                    <div className={styles.pieChartCardItem}>
-                      <b className={styles.pieChartHeading}>Today’s schedule</b>
-                      <p className={styles.dateInput}>See All</p>
-                    </div>
-                    <div className={styles.scheduleCenter}>
-                      <div className={styles.meetingColor}>
-                        <div className={styles.meetingCard}>
-                          <p className={styles.scheduleHeading}>
-                            Meeting with suppliers from Kuta Bali
-                          </p>
-                          <p className={styles.scheduleTime}>14.00-15.00</p>
-                          <p className={styles.scheduleLocation}>
-                            at Sunset Road, Kuta, Bali
-                          </p>
+
+                  {/* Pie Chart */}
+                  <div className={styles.pieChartContainer}>
+                    <div className={styles.alignPieChartCards}>
+                      <div className={styles.pieChartCard}>
+                        <div className={styles.pieChartCardItem}>
+                          <b className={styles.pieChartHeading}>Top products</b>
+                          <input
+                            className={styles.dateInput}
+                            type="date"
+                            name=""
+                            id=""
+                          />
+                        </div>
+                        <div className={styles.pieChartCenter}>
+                          <Chart
+                            options={{
+                              chart: {
+                                width: 380,
+                                type: "pie",
+                              },
+                              colors: [
+                                "#98D89E",
+                                "#F6DC7D",
+                                "#EE8484",
+                                "#bbc1f1",
+                              ],
+                              labels: [
+                                "Basic Tees",
+                                "Custom Short Pants",
+                                "Super Hoodies",
+                                "Shirt",
+                              ],
+                              responsive: [
+                                {
+                                  breakpoint: 1200, // tablet screen size
+                                  options: {
+                                    chart: {
+                                      width: 350,
+                                    },
+                                    legend: {
+                                      position: "right",
+                                    },
+                                  },
+                                },
+                                {
+                                  breakpoint: 760, // tablet screen size
+                                  options: {
+                                    chart: {
+                                      width: 300,
+                                    },
+                                    legend: {
+                                      position: "right",
+                                    },
+                                  },
+                                },
+                                {
+                                  breakpoint: 480, // mobile screen size
+                                  options: {
+                                    chart: {
+                                      width: 300,
+                                    },
+                                    legend: {
+                                      position: "bottom",
+                                    },
+                                  },
+                                },
+                                {
+                                  breakpoint: 325, // mobile screen size
+                                  options: {
+                                    chart: {
+                                      width: 280,
+                                    },
+                                    legend: {
+                                      position: "bottom",
+                                    },
+                                  },
+                                },
+                              ],
+                            }}
+                            series={guest}
+                            type="pie"
+                            width={380}
+                          />
                         </div>
                       </div>
-                      <div>
-                        <div className={styles.operationColor}>
-                          <div className={styles.meetingCard}>
-                            <p className={styles.scheduleHeading}>
-                              Check operation at Giga Factory 1
-                            </p>
-                            <p className={styles.scheduleTime}>18.00-20.00</p>
-                            <p className={styles.scheduleLocation}>
-                              at Central Jakarta
-                            </p>
+                      <div className={styles.pieChartCard}>
+                        <div className={styles.pieChartCardItem}>
+                          <b className={styles.pieChartHeading}>
+                            Today’s schedule
+                          </b>
+                          <p className={styles.dateInput}>See All</p>
+                        </div>
+                        <div className={styles.scheduleCenter}>
+                          <div className={styles.meetingColor}>
+                            <div className={styles.meetingCard}>
+                              <p className={styles.scheduleHeading}>
+                                Meeting with suppliers
+                              </p>
+                              <p className={styles.scheduleTime}>14.00-15.00</p>
+                              <p className={styles.scheduleLocation}>
+                                at Sunset Road, Kuta, Bali
+                              </p>
+                            </div>
+                          </div>
+                          <div>
+                            <div className={styles.operationColor}>
+                              <div className={styles.meetingCard}>
+                                <p className={styles.scheduleHeading}>
+                                  Check operation at Giga
+                                </p>
+                                <p className={styles.scheduleTime}>
+                                  18.00-20.00
+                                </p>
+                                <p className={styles.scheduleLocation}>
+                                  at Central Jakarta
+                                </p>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -427,9 +496,9 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <ToastContainer />
+          <ToastContainer />
+        </>
+      )}
     </>
   );
 };

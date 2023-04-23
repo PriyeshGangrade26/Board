@@ -99,7 +99,7 @@ const Login = ({ CheckLocalAuthentication }) => {
       password.includes("password")
     ) {
       setLoginEmailError("");
-      setloginPasswordError("Error: Invalid password format.");
+      setloginPasswordError("Invalid password format.");
     } else {
       setloginPasswordError("");
       setLoginEmailError("");
@@ -167,7 +167,7 @@ const Login = ({ CheckLocalAuthentication }) => {
       setSignUpNameError("");
       setSignUpEmailError("");
       setSignUpConfirmPasswordError("");
-      setSignUpPasswordError("Error: Invalid password format.");
+      setSignUpPasswordError("Invalid password format.");
     } else if (confirmpassword === "" || confirmpassword !== password) {
       setSignUpNameError("");
       setSignUpEmailError("");
@@ -218,7 +218,9 @@ const Login = ({ CheckLocalAuthentication }) => {
                       />
                       Sign in with Google
                     </button>
-                    <button className={styles.oneTabLoginBtn}>
+                    <button
+                      className={styles.oneTabLoginBtn}
+                      onClick={() => LoginWithRedirect()}>
                       <FontAwesomeIcon
                         icon={faApple}
                         className={styles.oneTabLoginIcon}
@@ -277,7 +279,9 @@ const Login = ({ CheckLocalAuthentication }) => {
                         {loginPasswordError}
                       </span>
                     )}
-                    <div className={styles.forgotPassword}>
+                    <div
+                      className={styles.forgotPassword}
+                      onClick={() => ToggleAccount()}>
                       Forgot password?
                     </div>
                     {/* Log In Button */}
@@ -408,9 +412,6 @@ const Login = ({ CheckLocalAuthentication }) => {
                         {signUpConfirmPasswordError}
                       </span>
                     )}
-                    <div className={styles.forgotPassword}>
-                      Forgot password?
-                    </div>
                     {/* Sign In Button */}
                     <button
                       className={styles.signBtn}

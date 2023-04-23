@@ -103,6 +103,7 @@
   margin-top: 10px;
 }
 
+/* tablet screen size */
 @media screen and (max-width: 900px) {
   .wrapper {
     width: 600px;
@@ -147,6 +148,7 @@
   }
 }
 
+/* mobile screen size */
 @media screen and (max-width: 550px) {
   .wrapper {
     width: 100%;
