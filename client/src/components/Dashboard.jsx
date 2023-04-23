@@ -91,18 +91,19 @@ const Dashboard = ({ LogOutLocalAuthentication }) => {
         logout({
           logoutParams: { returnTo: window.location.origin },
         });
-      }
-      setTimeout(() => {
-        isLoggedOut = true;
-        LogOutLocalAuthentication();
-        navigate("/");
+      } else {
         setTimeout(() => {
-          if (isLoggedOut) {
-            setdashboardLoadingSpinner(false);
-            setdashboardHideEverything(true);
-          }
+          isLoggedOut = true;
+          LogOutLocalAuthentication();
+          navigate("/");
+          setTimeout(() => {
+            if (isLoggedOut) {
+              setdashboardLoadingSpinner(false);
+              setdashboardHideEverything(true);
+            }
+          }, 3000);
         }, 3000);
-      }, 3000);
+      }
     }, 3000);
   };
 
